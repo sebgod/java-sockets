@@ -1,3 +1,15 @@
+# JNI libraries
+*.so
+*.dll
+*.dylib
+*.o
+*.obj
+*.lib
+
+# Build artifacts
+*/doc/
+*/build.src/
+
 *.class
 
 # Mobile Tools for Java (J2ME)
