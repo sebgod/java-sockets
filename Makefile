@@ -1,5 +1,6 @@
 ANT:=ant
 CP:=cp
+MKDIR:=mkdir
 
 ANT_DIRS:=rocksaw vserv-tcpip
 
@@ -10,7 +11,8 @@ all: rocksaw
 
 .PHONY: rocksaw
 rocksaw: vserv-tcpip
-	@$(CP) -u $</lib/*.jar $@/lib/
+	@$(MKDIR) -p $@/lib
+	@$(CP) -t $@/lib -u $</lib/*.jar
 	@$(call MAKE_ANT_DIR,$@,all)
 
 .PHONY: vserv-tcpip
