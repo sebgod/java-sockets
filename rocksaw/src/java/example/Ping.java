@@ -121,6 +121,8 @@ public class Ping {
     /**
      * Closes the raw socket opened by the constructor.  After calling
      * this method, the object cannot be used.
+     *
+     * @throws IOException if the underlying socket cannot be closed
      */
     public void close() throws IOException {
       socket.close();
@@ -158,6 +160,7 @@ public class Ping {
      *
      * @param host The host to ping.
      * @return The round trip time in nanoseconds.
+     * @throws IOException if either send or receive throws
      */
     public long ping(InetAddress host) throws IOException {
       sendEchoRequest(host);

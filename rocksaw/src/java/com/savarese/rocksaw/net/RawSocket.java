@@ -633,7 +633,9 @@ public class RawSocket {
     return read(data, 0, data.length, address);
   }
 
-  /** Same as {@code read(address, data, 0, data.length, null);} */
+  /** Same as {@code read(address, data, 0, data.length, null);}
+   * @return Number of bytes read
+   * */
   public int read(byte[] data)
     throws IOException, InterruptedIOException
   {
@@ -689,7 +691,11 @@ public class RawSocket {
     return result;
   }
 
-  /** Same as {@code write(address, data, 0, data.length);} */
+  /** Same as {@code write(address, data, 0, data.length);}
+   * @throws IOException according to contract
+   * @throws InterruptedIOException according to contract
+   * @return Number of bytes written
+   * */
   public int write(InetAddress address, byte[] data)
     throws IOException, InterruptedIOException
   {
