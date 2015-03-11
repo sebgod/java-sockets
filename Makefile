@@ -1,10 +1,19 @@
 ANT:=ant
 CP:=cp
 MKDIR:=mkdir
+EXTRA_ANT_FLAGS:=
 
+ifeq ($(WINDIR),)
+    CC:=cc
+else
+    CC:=cl
+    EXTRA_ANT_FLAGS+=-Djni.makefile=Makefile.win32
+endif
+
+ANT_FLAGS:= -Djni.make="$(MAKE)" -Djni.cc="$(CC)" $(EXTRA_ANT_FLAGS)
 ANT_DIRS:=rocksaw vserv-tcpip
 
-MAKE_ANT_DIR=pushd $(1) ; $(ANT) -Djni.make="$(MAKE)" -Djni.cc="$(CC)" $(2) ; popd
+MAKE_ANT_DIR=pushd $(1) ; $(ANT) $(ANT_FLAGS) $(2) ; popd
 
 .PHONY: all
 all: rocksaw

@@ -14,8 +14,6 @@
 # limitations under the License.
 
 UNAME  := $(shell uname)
-CYGWIN := $(findstring CYGWIN,$(UNAME))
-DARWIN := $(findstring Darwin,$(UNAME))
 
 CC       = gcc
 SHARED   = -shared
@@ -28,29 +26,39 @@ CPPFLAGS = $(EXTRA_CPPFLAGS)
 LIBNAME  = librocksaw
 LIBEXTENSION = so
 
-ifeq ($(DARWIN),Darwin)
+ifeq ($(UNAME),Darwin)
+  PLAF = unix
   JAVA_INCDIR  = $(JAVA_HOME)/include
   LIBEXTENSION = jnilib
+  CFLAGS += -fPIC -DPIC
   CPPFLAGS += -I$(JAVA_INCDIR)
   LDFLAGS += -dynamiclib -noprebind -single_module -framework JavaVM
   SHARED =
 else
-  ifeq ($(CYGWIN),CYGWIN)
+  ifeq ($(UNAME),CYGWIN)
     override CC += -mno-cygwin
     CPPFLAGS += -D__int64="long long"
     LDFLAGS += -Wl,--kill-at -l$(WINSOCK)
     JDK_HOME := $(shell cygpath $(JDK_HOME))
     LIBNAME      = rocksaw
     LIBEXTENSION = dll
+  else
+    ifeq ($(UNAME),Linux)
+       PLAF = linux
+       CFLAGS += -fPIC -DPIC
+    else
+       PLAF = win32
+       LDFLAGS += -l$(WINSOCK)
+    endif
   endif
 
   JAVA_INCDIR      = $(JDK_HOME)/include
-  JAVA_INCDIR_PLAF = $(dir $(wildcard $(JAVA_INCDIR)/*/jni_md.h))
-  CPPFLAGS += -I$(JAVA_INCDIR) -I$(JAVA_INCDIR_PLAF)
-  CFLAGS += -ansi -pthread -fPIC -DPIC
+  JAVA_INCDIR_PLAF = $(JAVA_INCDIR)/$(PLAF)
+  CPPFLAGS += -I"$(JAVA_INCDIR)" -I"$(JAVA_INCDIR_PLAF)"
+  CFLAGS += -ansi -pthread
 endif
 
-SRC := $(shell find . -name "*.c" -print)
+SRC := $(wildcard *.c)
 OBJ := $(SRC:%.c=%.o)
 
 CLEAN_EXTENSIONS = o $(LIBEXTENSION)
@@ -66,7 +74,5 @@ $(LIBROCKSAW): $(OBJ)
 	$(CC) $(SHARED) -o $@ $^ $(LDFLAGS)
 
 clean:
-	for extension in $(CLEAN_EXTENSIONS); do \
-		find . -name "*.$$extension" | xargs rm -f ; \
-	done
-	find . -name "*~" | xargs rm -f
+	$(foreach EXT,$(CLEAN_EXTENSIONS),/bin/rm -f *.$(EXT);)
+	/bin/rm -f *~

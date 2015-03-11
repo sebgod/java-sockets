@@ -18,12 +18,16 @@ JAVA_INCDIR_PLAF = $(JAVA_INCDIR)\win32
 
 CC        = cl
 CFLAGS    = -TC
-CPPFLAGS  = -I$(JAVA_INCDIR) -I$(JAVA_INCDIR_PLAF)
+CPPFLAGS  = -I"$(JAVA_INCDIR)" -I"$(JAVA_INCDIR_PLAF)"
 WINSOCK   = ws2_32
 LDFLAGS   = $(WINSOCK).lib
+BITNESS := $(findstring 64-Bit,$(shell java -version 2>&1))
+ifeq ($(BITNESS),64-Bit)
+    CFLAGS += -D:X64=1
+endif
 
 SRC = RawSocket.c
-OBJ = $(SRC:.c=.obj)
+OBJ = $(patsubst %.c,%.obj,$(SRC))
 
 LIBNAME          = rocksaw
 LIBEXTENSION     = dll
@@ -32,11 +36,11 @@ CLEAN_EXTENSIONS = *.obj *.$(LIBEXTENSION) *.lib *.exp
 
 all: $(LIBROCKSAW)
 
-.c.obj:
-	$(CC) -nologo $(CFLAGS) $(CPPFLAGS) -c $< -o $@
+%.obj: %.c
+	$(CC) -nologo $(CFLAGS) $(CPPFLAGS) -c $<
 
 $(LIBROCKSAW): $(OBJ)
-	$(CC) -nologo -MD -LD -o $@ $** $(LDFLAGS)
+	$(CC) -nologo -MD -LD -o $@ $^ $(LDFLAGS)
 
 clean:
-	del $(CLEAN_EXTENSIONS)
+	/bin/rm -f $(CLEAN_EXTENSIONS)
