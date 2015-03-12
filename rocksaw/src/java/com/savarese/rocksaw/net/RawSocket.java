@@ -42,6 +42,7 @@ public class RawSocket {
 
   private native static int __PF_INET();
   private native static int __PF_INET6();
+  private native static int __PF_PACKET();
 
   /**
    * A protocol family constant for {@link #open} indicating IPv4.
@@ -54,6 +55,12 @@ public class RawSocket {
    * <em>This should be moved to another class.</em>
    */
   public static final int PF_INET6;
+
+  /**
+   * A protocol family constant for {@link #open} indicating Raw packets.
+   * <em>This should be moved to another class.</em>
+   */
+  public static final int PF_PACKET;
 
   /**
    * Initializes any system resources used by the RockSaw library.
@@ -85,6 +92,7 @@ public class RawSocket {
 
     PF_INET  = __PF_INET();
     PF_INET6 = __PF_INET6();
+    PF_PACKET = __PF_PACKET();
   }
 
   private static final int __UNDEFINED = -1;

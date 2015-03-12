@@ -44,6 +44,10 @@ Java_com_savarese_rocksaw_net_RawSocket__1_1PF_1INET6
 (JNIEnv *, jclass);
 
 JNIEXPORT jint JNICALL
+Java_com_savarese_rocksaw_net_RawSocket__1_1PF_1PACKET
+(JNIEnv *, jclass);
+
+JNIEXPORT jint JNICALL
 Java_com_savarese_rocksaw_net_RawSocket__1_1select
 (JNIEnv *env, jclass cls, jint, jboolean, jint);
 

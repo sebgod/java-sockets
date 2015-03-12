@@ -324,6 +324,18 @@ Java_com_savarese_rocksaw_net_RawSocket__1_1PF_1INET6
 
 /*
  * Class:     com_savarese_rocksaw_net_RawSocket
+ * Method:    __PF_PACKET
+ * Signature: ()I
+ */
+JNIEXPORT jint JNICALL
+Java_com_savarese_rocksaw_net_RawSocket__1_1PF_1PACKET
+(JNIEnv *env, jclass cls)
+{
+  return AF_PACKET;
+}
+
+/*
+ * Class:     com_savarese_rocksaw_net_RawSocket
  * Method:    __socket
  * Signature: (II)I
  */
