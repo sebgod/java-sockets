@@ -14,15 +14,15 @@ import java.util.concurrent.*;
 import com.savarese.rocksaw.net.RawSocket;
 
 public class AddressResolver {
-    protected final RawSocket socket;
-    protected final NetworkInterface networkInterface;
+    protected final RawSocket _socket;
+    protected final NetworkInterface _networkInterface;
 
     protected AddressResolver(NetworkInterface networkInterface)
         throws IOException
     {
-        this.socket = new RawSocket();
-        this.networkInterface = networkInterface;
-
+        _socket = new RawSocket();
+        _networkInterface = networkInterface;
+        _socket.open(RawSocket.PF_PACKET, 0x806);
     }
 
     public void sendBroadcast()
@@ -30,7 +30,7 @@ public class AddressResolver {
     {
         ARPPacket broadcast = new ARPPacket();
         broadcast.setOperation(ARPPacket.OPER_REQ);
-        broadcast.setSender(networkInterface);
+        broadcast.setSender(_networkInterface);
         broadcast.setTargetMAC(ARPPacket.MAC_BROADCAST);
         broadcast.setTargetIP(ARPPacket.IP4_EMPTY);
     }
@@ -42,8 +42,8 @@ public class AddressResolver {
      * @throws IOException if the underlying socket cannot be closed
      */
     public void close() throws IOException {
-        if (socket.isOpen()) {
-            socket.close();
+        if (_socket.isOpen()) {
+            _socket.close();
         }
     }
 
@@ -72,12 +72,15 @@ public class AddressResolver {
                 throw new UnsupportedOperationException(
                         "cannot find any suitable network interface");
             }
+
+            NetworkInterface firstNetworkInterface =
+                    usableIfaces.get(0);
             
-            for (NetworkInterface iface : usableIfaces) {
-                System.out.println(iface);
-            }
+            System.out.println("using interface: " +
+                    firstNetworkInterface);
             
-            addressResolver = new AddressResolver(usableIfaces.get(0));
+            addressResolver = new AddressResolver(firstNetworkInterface);
+            addressResolver.sendBroadcast();
         } finally {
             try {
                 if (addressResolver != null) {
